@@ -132,6 +132,10 @@ export default function (editor: Editor, lazyResize: () => Option<TableResize>, 
       return (raw.buttons & 1) !== 0;
     };
 
+    const dragStart = (_e: MouseEvent) => {
+      mouseHandlers.clearstate();
+    };
+
     const mouseDown = (e: MouseEvent) => {
       if (isLeftMouse(e) && hasInternalTarget(e)) {
         mouseHandlers.mousedown(DomEvent.fromRawEvent(e));
@@ -172,6 +176,7 @@ export default function (editor: Editor, lazyResize: () => Option<TableResize>, 
 
     const doubleTap = getDoubleTap();
 
+    editor.on('dragstart', dragStart);
     editor.on('mousedown', mouseDown);
     editor.on('mouseover', mouseOver);
     editor.on('mouseup', mouseUp);
