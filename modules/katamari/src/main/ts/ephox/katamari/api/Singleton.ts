@@ -7,7 +7,7 @@ interface Singleton<T> {
   set: (value: T) => void;
 }
 
-interface Api<T> extends Singleton<T> {
+export interface Api<T> extends Singleton<T> {
   run: (fn: (data: T) => void) => void;
 }
 
