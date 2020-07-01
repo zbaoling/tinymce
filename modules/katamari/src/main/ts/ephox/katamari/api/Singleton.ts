@@ -7,6 +7,8 @@ interface Singleton<T> {
   set: (value: T) => void;
 }
 
+export interface Revocable<T> extends Singleton<T> { };
+
 export interface Api<T> extends Singleton<T> {
   run: (fn: (data: T) => void) => void;
 }
@@ -39,9 +41,9 @@ const revocable = <T> (doRevoke: (data: T) => void): Singleton<T> => {
   };
 };
 
-export const destroyable = <T extends { destroy: () => void }> (): Singleton<T> => revocable<T>((s) => s.destroy());
+export const destroyable = <T extends { destroy: () => void }> (): Revocable<T> => revocable<T>((s) => s.destroy());
 
-export const unbindable = <T extends { unbind: () => void }> (): Singleton<T> => revocable<T>((s) => s.unbind());
+export const unbindable = <T extends { unbind: () => void }> (): Revocable<T> => revocable<T>((s) => s.unbind());
 
 export const api = <T extends { destroy: () => void }> (): Api<T> => {
   const subject = Cell(Option.none<T>());
