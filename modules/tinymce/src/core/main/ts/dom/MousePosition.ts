@@ -38,9 +38,7 @@ const getAbsolutePosition = (elm: HTMLElement) => {
   };
 };
 
-const getBodyPosition = (editor: Editor): Position => {
-  return editor.inline ? getAbsolutePosition(editor.getBody()) : { left: 0, top: 0 };
-};
+const getBodyPosition = (editor: Editor): Position => editor.inline ? getAbsolutePosition(editor.getBody()) : { left: 0, top: 0 };
 
 const getScrollPosition = (editor: Editor): Position => {
   const body = editor.getBody();
