@@ -41,12 +41,12 @@ UnitTest.asynctest('browser.tinymce.plugins.table.DragSelectionTest', (success, 
           // realistically the browser would probably put more than 2 mousemove events in here
           // but as long as there aren't zero mouse move events along the way to the mouse over
           // event then it's okay
-          Mouse.cMouseMoveWith({ dx: 0, dy: -10, buttons: Mouse.buttons.LEFT_CLICK }),
-          Mouse.cMouseMoveWith({ dx: 0, dy: -20, buttons: Mouse.buttons.LEFT_CLICK })
+          Mouse.cMouseMoveWith({ dx: 0, dy: -10, buttons: Mouse.leftClickButtons }),
+          Mouse.cMouseMoveWith({ dx: 0, dy: -20, buttons: Mouse.leftClickButtons })
         ]),
         Chain.fromIsolatedChains([
           UiFinder.cFindIn('#dragto'),
-          Mouse.cMouseOverWith({ buttons: Mouse.buttons.LEFT_CLICK })
+          Mouse.cMouseOverWith({ buttons: Mouse.leftClickButtons })
         ]),
         UiFinder.cNotExists('td[data-mce-selected]')
       ])
