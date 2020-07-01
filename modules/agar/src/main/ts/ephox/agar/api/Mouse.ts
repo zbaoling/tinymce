@@ -16,33 +16,33 @@ const cMouseOutWith = Fun.compose(Chain.op, Clicks.mouseOut);
 
 // With delta position (shifted relative to top-left of component)
 /**
- * @deprecated */
+ * @deprecated use cMouseUpWith({ dx, dy }) instead */
 const cMouseUpTo = (dx: number, dy: number) => cMouseUpWith({ dx, dy });
 /**
- * @deprecated */
+ * @deprecated use cMouseMoveWith({ dx, dy }) instead */
 const cMouseMoveTo = (dx: number, dy: number) => cMouseMoveWith({ dx, dy });
 
 // No extra settings
 /**
- * @deprecated */
+ * @deprecated use cClickWith({ }) instead*/
 const cClick = cClickWith({ });
 /**
- * @deprecated */
+ * @deprecated use cContextMenuWith({ }) instead */
 const cContextMenu = cContextMenuWith({ });
 /**
- * @deprecated */
+ * @deprecated use cMouseOverWith({ }) instead */
 const cMouseOver = cMouseOverWith({ });
 /**
- * @deprecated */
+ * @deprecated use cMouseDownWith({ }) instead */
 const cMouseDown = cMouseDownWith({ });
 /**
- * @deprecated */
+ * @deprecated use cMouseUpWith({ }) instead */
 const cMouseUp = cMouseUpWith({ });
 /**
- * @deprecated */
+ * @deprecated use cMouseMoveWith({ }) instead */
 const cMouseMove = cMouseMoveWith({ });
 /**
- * @deprecated */
+ * @deprecated use cMouseOutWith({ }) instead */
 const cMouseOut = cMouseOutWith({ });
 
 // Work with selectors
@@ -82,11 +82,14 @@ const cTrueClick = Chain.op(trueClick);
 const sTrueClickOn = <T>(container: Element, selector: string) => sTriggerOn<T>(container, selector, trueClick);
 
 // Low level exports
-const button = Clicks.button;
-const buttons = Clicks.buttons;
+const leftClickButton = Clicks.leftClickButton ;
+const middleClickButton = Clicks.middleClickButton ;
+const rightClickButton = Clicks.rightClickButton ;
+const leftClickButtons = Clicks.leftClickButtons ;
+const rightClickButtons = Clicks.rightClickButtons ;
+const middleClickButtons = Clicks.middleClickButtons ;
 /**
- * Use event instead.
- * @deprecated */
+ * @deprecated Use event instead */
 const point = Clicks.point;
 const event = Clicks.event;
 
@@ -118,8 +121,13 @@ export {
   cTrueClick,
   sTrueClickOn,
 
-  button,
-  buttons,
+  leftClickButton,
+  middleClickButton,
+  rightClickButton,
+  leftClickButtons,
+  rightClickButtons,
+  middleClickButtons,
+
   point,
   event
 };

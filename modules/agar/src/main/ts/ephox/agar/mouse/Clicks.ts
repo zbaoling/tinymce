@@ -4,18 +4,14 @@ import { Fun, Obj } from '@ephox/katamari';
 
 // The 'button' field of the mouse event - which button was pressed to create the event. Pick only one value. Not defined for mouseenter,
 // mouseleave, mouseover, mouseout or mousemove.
-const button = {
-  LEFT_CLICK: 0,
-  MIDDLE_CLICK: 1,
-  RIGHT_CLICK: 2
-};
+const leftClickButton = 0;
+const middleClickButton = 1;
+const rightClickButton = 2;
 
 // The 'buttons' field of the mouse event - which buttons *were already pressed* at the time the event fired. Forms a bitfield.
-const buttons = {
-  LEFT_CLICK: 1,
-  RIGHT_CLICK: 2,
-  MIDDLE_CLICK: 4
-};
+const leftClickButtons = 1;
+const rightClickButtons = 2;
+const middleClickButtons = 4;
 
 // Settings for mouse events
 interface Settings {
@@ -80,7 +76,7 @@ const mouseUp = Fun.curry(event, 'mouseup');
 const mouseMove = Fun.curry(event, 'mousemove');
 const mouseOver = Fun.curry(event, 'mouseover');
 const mouseOut = Fun.curry(event, 'mouseout');
-const contextMenu = (settings: Settings) => event('contextmenu', { button: button.RIGHT_CLICK, ...settings });
+const contextMenu = (settings: Settings) => event('contextmenu', { button: rightClickButton, ...settings });
 
 // Note: This can be used for phantomjs.
 const trigger = function (element: Element<any>): any {
@@ -89,7 +85,7 @@ const trigger = function (element: Element<any>): any {
     return ele.click();
   }
   // Adapted from: http://stackoverflow.com/questions/17468611/triggering-click-event-phantomjs
-  point('click', button.LEFT_CLICK, element, 0, 0);
+  point('click', leftClickButton, element, 0, 0);
   return undefined;
 };
 
@@ -111,8 +107,12 @@ export {
   event,
   Settings,
   EventType,
-  button,
-  buttons,
+  leftClickButton,
+  middleClickButton,
+  rightClickButton,
+  leftClickButtons,
+  rightClickButtons,
+  middleClickButtons,
   click,
   mouseDown,
   mouseUp,
