@@ -11,6 +11,7 @@ import DOMUtils from './api/dom/DOMUtils';
 import Selection from './api/dom/Selection';
 import Editor from './api/Editor';
 import Delay from './api/util/Delay';
+import { EditorEvent } from './api/util/EventDispatcher';
 import * as MousePosition from './dom/MousePosition';
 import * as NodeType from './dom/NodeType';
 import * as Predicate from './util/Predicate';
@@ -96,7 +97,14 @@ const appendGhostToBody = (ghostElm: HTMLElement, bodyElm: HTMLElement) => {
   }
 };
 
-const moveGhost = (ghostElm: HTMLElement, position, width: number, height: number, maxX: number, maxY: number) => {
+const moveGhost = (
+  ghostElm: HTMLElement,
+  position: MousePosition.PagePosition,
+  width: number,
+  height: number,
+  maxX: number,
+  maxY: number
+) => {
   let overflowX = 0, overflowY = 0;
 
   ghostElm.style.left = position.pageX + 'px';
@@ -120,14 +128,14 @@ const removeElement = (elm: HTMLElement) => {
   }
 };
 
-const isLeftMouseButtonPressed = (e: MouseEvent) => e.button === 0;
+const isLeftMouseButtonPressed = (e: EditorEvent<MouseEvent>) => e.button === 0;
 
-const applyRelPos = (state: State, position) => ({
+const applyRelPos = (state: State, position: MousePosition.PagePosition) => ({
   pageX: position.pageX - state.relX,
   pageY: position.pageY + 5
 });
 
-const start = (state: Singleton.Value<State>, editor: Editor) => (e: MouseEvent) => {
+const start = (state: Singleton.Value<State>, editor: Editor) => (e: EditorEvent<MouseEvent>) => {
   if (isLeftMouseButtonPressed(e)) {
     const ceElm = Arr.find(editor.dom.getParents(e.target as HTMLElement), Predicate.or(isContentEditableFalse, isContentEditableTrue)).getOr(null);
 
@@ -160,7 +168,7 @@ const move = (state: Singleton.Value<State>, editor: Editor) => {
     editor.selection.placeCaretAt(clientX, clientY);
   }, 0);
 
-  return (e: MouseEvent) => state.on((state) => {
+  return (e: EditorEvent<MouseEvent>) => state.on((state) => {
     const movement = Math.max(Math.abs(e.screenX - state.screenX), Math.abs(e.screenY - state.screenY));
 
     if (!state.dragging && movement > 10) {
@@ -191,7 +199,7 @@ const getRawTarget = (selection: Selection) => {
   return startContainer.nodeType === 3 ? startContainer.parentNode : startContainer;
 };
 
-const drop = (state: Singleton.Value<State>, editor: Editor) => (e: MouseEvent) => {
+const drop = (state: Singleton.Value<State>, editor: Editor) => (e: EditorEvent<MouseEvent>) => {
   state.on((state) => {
     if (state.dragging) {
       if (isValidDropTarget(editor, getRawTarget(editor.selection), state.element)) {
@@ -252,14 +260,14 @@ const bindFakeDragEvents = (editor: Editor) => {
   pageDom.bind(rootDocument, 'mousemove', dragHandler);
   pageDom.bind(rootDocument, 'mouseup', dragEndHandler);
 
-  editor.on('remove', function () {
+  editor.on('remove', () => {
     pageDom.unbind(rootDocument, 'mousemove', dragHandler);
     pageDom.unbind(rootDocument, 'mouseup', dragEndHandler);
   });
 };
 
 const blockIeDrop = (editor: Editor) => {
-  editor.on('drop', (e: MouseEvent) => {
+  editor.on('drop', (e) => {
     // FF doesn't pass out clientX/clientY for drop since this is for IE we just use null instead
     const realTarget = typeof e.clientX !== 'undefined' ? editor.getDoc().elementFromPoint(e.clientX, e.clientY) : null;
 
