@@ -449,6 +449,10 @@ class Editor implements EditorObservable {
     return getParam(this, name, defaultVal, type);
   }
 
+  public hasPlugin(key: string): boolean {
+    return Tools.inArray(getParam(this, 'plugins', '', 'string').split(/[ ,]/), key) !== -1;
+  }
+
   /**
    * Dispatches out a onNodeChange event to all observers. This method should be called when you
    * need to update the UI states or element path etc.

@@ -427,7 +427,13 @@ UnitTest.asynctest('browser.tinymce.core.EditorTest', (success, failure) => {
 
     input.parentNode.removeChild(input);
   }));
-  });
+
+  const sHasPlugin = (editor: Editor) => Log.step('', 'hasPlugin', Step.sync(() => {
+    editor.settings.plugins = 'Plugin Is Not Here';
+    Assert.eq('Plugin does not exist', editor.hasPlugin('PartiuclarPlugin'), false);
+    editor.settings.plugins = 'Has PartiuclarPlugin In List';
+    Assert.eq('Plugin does exist', editor.hasPlugin('PartiuclarPlugin'), true);
+  }));
 
   TinyLoader.setup((editor, onSuccess, onFailure) => {
     Pipeline.async({},
@@ -456,7 +462,8 @@ UnitTest.asynctest('browser.tinymce.core.EditorTest', (success, failure) => {
         sTreatSomeParagraphsAsEmptyContents(editor),
         sKamerWordBoundaries(editor),
         sPreserveWhitespacePreElements(editor),
-        sHasFocus(editor)
+        sHasFocus(editor),
+        sHasPlugin(editor)
       ],
       onSuccess, onFailure);
   }, {
