@@ -5,13 +5,14 @@
  * For commercial licenses see https://www.tiny.cloud/
  */
 
-import { document } from '@ephox/dom-globals';
+import { document, DragEvent, HTMLElement } from '@ephox/dom-globals';
 import { Arr } from '@ephox/katamari';
 import DOMUtils from './api/dom/DOMUtils';
 import Editor from './api/Editor';
 import Delay from './api/util/Delay';
 import * as MousePosition from './dom/MousePosition';
 import * as NodeType from './dom/NodeType';
+import { isUIElement } from './focus/FocusController';
 import * as Predicate from './util/Predicate';
 
 /**
@@ -261,9 +262,56 @@ const blockIeDrop = function (editor: Editor) {
   });
 };
 
+const preventFileDrop = (e: DragEvent) => {
+  // Prevent file drop events within the editor, as they'll cause the browser to navigate away
+  const dataTransfer = e.dataTransfer;
+  if (dataTransfer && (Arr.contains(dataTransfer.types, 'Files') || dataTransfer.files.length > 0)) {
+    e.preventDefault();
+  }
+};
+
+// Block files being dropped within the editor to prevent accidentally navigating away
+// while editor. Note that we can't use the `editor.on` API here, as we want these
+// to run after the editor event handlers have run. We also bind to the document
+// so that it'll try to ensure it's the last thing that runs, as it bubbles up the dom.
+const blockFileDrop = (editor: Editor) => {
+  const pageDom = DOMUtils.DOM;
+  const doc = document;
+
+  const preventFileDropIfUIElement = (e: DragEvent) => {
+    if (isUIElement(editor, e.target as HTMLElement)) {
+      preventFileDrop(e);
+    }
+  };
+
+  const setup = () => {
+    const dom = editor.dom;
+    const editorRoot = editor.inline ? editor.getBody() : editor.getDoc();
+
+    const eventNames = [ 'drop', 'dragover' ];
+    Arr.each(eventNames, (name) => {
+      pageDom.bind(doc, name, preventFileDropIfUIElement);
+      dom.bind(editorRoot, name, preventFileDrop);
+    });
+
+    editor.on('remove', () => {
+      Arr.each(eventNames, (name) => {
+        pageDom.unbind(doc, name, preventFileDropIfUIElement);
+        dom.unbind(editorRoot, name, preventFileDrop);
+      });
+    });
+  };
+
+  editor.on('init', () => {
+    // Use a timeout to ensure this fires after all other init callbacks
+    Delay.setEditorTimeout(editor, setup, 0);
+  });
+};
+
 const init = function (editor: Editor) {
   bindFakeDragEvents(editor);
   blockIeDrop(editor);
+  blockFileDrop(editor);
 };
 
 export {
