@@ -199,6 +199,17 @@ const register = (htmlParser: DomParser, settings: DomSerializerSettings, dom: D
       }
     }
   );
+
+  // Remove contenteditable attributes from media elements
+  htmlParser.addNodeFilter('video,audio,embed,object', (nodes) => {
+    let i = nodes.length;
+    while (i--) {
+      const node = nodes[i];
+      const original = node.attr('data-mce-contenteditable');
+      node.attr('contenteditable', original ? original : null);
+      node.attr('data-mce-contenteditable', null);
+    }
+  });
 };
 
 /**

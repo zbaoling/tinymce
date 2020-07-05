@@ -19,6 +19,7 @@ import { getPositionsUntilNextLine, getPositionsUntilPreviousLine } from '../car
 import * as LineUtils from '../caret/LineUtils';
 import * as LineWalker from '../caret/LineWalker';
 import * as NodeType from '../dom/NodeType';
+import * as ScrollIntoView from '../dom/ScrollIntoView';
 import * as InlineUtils from '../keyboard/InlineUtils';
 import * as RangeNodes from '../selection/RangeNodes';
 import * as ArrUtils from '../util/ArrUtils';
@@ -223,6 +224,7 @@ const moveV = (editor: Editor, down: boolean) => () => {
 
   if (newRng) {
     editor.selection.setRng(newRng);
+    ScrollIntoView.scrollRangeIntoView(editor, newRng);
     return true;
   } else {
     return false;
